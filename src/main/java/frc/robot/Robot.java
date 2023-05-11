@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -27,11 +28,13 @@ public class Robot extends TimedRobot {
    */
   NetworkTable table;
   boolean foundObject;
+  PIDController angController;
 
   @Override
   public void robotInit() {
     foundObject = false;
     table = NetworkTableInstance.getDefault().getTable("LysolLimelight");
+    angController = new PIDController(0.01, 0, 0);
   }
 
   @Override
@@ -77,6 +80,13 @@ public class Robot extends TimedRobot {
 
     double angle = Math.asin(Math.hypot(x, y) / distance);
     SmartDashboard.putNumber("Angle", angle);
+
+    double velocity = -angController.calculate(Math.copySign(angle, x));
+
+    while (angle < 5) {
+      ChassisSpeeds swerveVelocity = new ChassisSpeeds(0, velocity, 0);
+      //m_drivetrainSubsystem.drive(swerveVelocity);
+    }
   }
 
   @Override

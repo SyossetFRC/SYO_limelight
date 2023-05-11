@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -78,7 +79,7 @@ public class Robot extends TimedRobot {
     double distance = 33.6 + (-1.57 * area) + (0.0286 * Math.pow(area, 2));
     SmartDashboard.putNumber("Distance", distance);
 
-    double angle = Math.asin(Math.hypot(x, y) / distance);
+    double angle = Math.atan(Math.hypot(x, y) / distance);
     SmartDashboard.putNumber("Angle", angle);
 
     double velocity = -angController.calculate(Math.copySign(angle, x));

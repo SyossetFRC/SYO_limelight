@@ -69,6 +69,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("LimelightY", y);
     SmartDashboard.putNumber("LimelightArea", area);
 
+    // boolean to check if april tag is found
     if (x != 0) {
       foundObject = true;
     } else {
@@ -76,15 +77,19 @@ public class Robot extends TimedRobot {
     }
     SmartDashboard.putBoolean("Found April Tag?", foundObject);
 
+    // distance polynomial reg
     double distance = 33.6 + (-1.57 * area) + (0.0286 * Math.pow(area, 2));
     SmartDashboard.putNumber("Distance", distance);
 
-    double POVAngle = Math.atan(x / distance)*180 / Math.PI;
-    double orbitalAngle = Math.atan(Math.hypot(x, y) / distance)*180 / Math.PI;
+    // x angle and orbital angle calculations
+    double POVAngle = Math.atan(x / distance) * 180 / Math.PI;
+    double orbitalAngle = Math.atan(Math.hypot(x, y) / distance) * 180 / Math.PI;
     SmartDashboard.putNumber("Orbital Angle", orbitalAngle);
     SmartDashboard.putNumber("POV Angle", POVAngle);
 
+    // swerve bot calculations for velocity
     double velocity = -angController.calculate(Math.copySign(POVAngle, x));
+    velocity = (velocity < 0.005) ? 0 : velocity;
     SmartDashboard.putNumber("Velocity", velocity);
     ChassisSpeeds swerveVelocity = new ChassisSpeeds(0, velocity, 0);
   }

@@ -34,7 +34,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     foundObject = false;
-    table = NetworkTableInstance.getDefault().getTable("LysolLimelight");
     angController = new PIDController(0.01, 0, 0);
   }
 
@@ -52,6 +51,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    table = NetworkTableInstance.getDefault().getTable("limelight");
   }
 
   public void teleopPeriodic() {
@@ -69,7 +69,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("LimelightY", y);
     SmartDashboard.putNumber("LimelightArea", area);
 
-    if (x != 0 && y != 0) {
+    if (x != 0) {
       foundObject = true;
     } else {
       foundObject = false;
@@ -79,15 +79,14 @@ public class Robot extends TimedRobot {
     double distance = 33.6 + (-1.57 * area) + (0.0286 * Math.pow(area, 2));
     SmartDashboard.putNumber("Distance", distance);
 
-    double angle = Math.atan(Math.hypot(x, y) / distance);
-    SmartDashboard.putNumber("Angle", angle);
+    double POVAngle = Math.atan(x / distance)*180 / Math.PI;
+    double orbitalAngle = Math.atan(Math.hypot(x, y) / distance)*180 / Math.PI;
+    SmartDashboard.putNumber("Orbital Angle", orbitalAngle);
+    SmartDashboard.putNumber("POV Angle", POVAngle);
 
-    double velocity = -angController.calculate(Math.copySign(angle, x));
-
-    while (angle < 5) {
-      ChassisSpeeds swerveVelocity = new ChassisSpeeds(0, velocity, 0);
-      //m_drivetrainSubsystem.drive(swerveVelocity);
-    }
+    double velocity = -angController.calculate(Math.copySign(POVAngle, x));
+    SmartDashboard.putNumber("Velocity", velocity);
+    ChassisSpeeds swerveVelocity = new ChassisSpeeds(0, velocity, 0);
   }
 
   @Override

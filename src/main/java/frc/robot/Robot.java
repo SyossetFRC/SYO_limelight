@@ -4,10 +4,7 @@
 
 package frc.robot;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 /**
@@ -18,7 +15,11 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  */
 public class Robot extends TimedRobot {
   RobotContainer m_container;
-  String m_autonPosition;
+
+  private double m_startXPos;
+  private double m_startYPos;
+  private double m_startTheta;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -42,58 +43,20 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-
-    boolean autonPositionLeft = Shuffleboard.getTab("Drivetrain")
-        .add("Left Auton", false)
-        .withWidget("Toggle Button")
-        .getEntry()
-        .getBoolean(false);
-
-    boolean autonPositionMid = Shuffleboard.getTab("Drivetrain")
-        .add("Mid Auton", false)
-        .withWidget("Toggle Button")
-        .getEntry()
-        .getBoolean(false);
-
-    boolean autonPositionRight = Shuffleboard.getTab("Drivetrain")
-        .add("Right Auton", false)
-        .withWidget("Toggle Button")
-        .getEntry()
-        .getBoolean(false);
-
-    if (autonPositionLeft) {
-      m_autonPosition = "left";
-    }
-    if (autonPositionMid) {
-      m_autonPosition = "mid";
-    }
-    if (autonPositionRight) {
-      m_autonPosition = "right";
-    }
-
-    boolean resetSubsystem = Shuffleboard.getTab("LiveWindow")
-        .add("Reset Subsystems", false)
-        .withWidget("Toggle Button")
-        .getEntry()
-        .getBoolean(false);
-
-    if (resetSubsystem) {
-      m_container.reset(0);
-    }
   }
 
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    // This makes sure that all lingering commands stopsrunning when
+    // autonomous starts running.
     CommandScheduler.getInstance().cancelAll();
 
-    m_container.reset(1);
-    m_container.setIdleMode(0);
+    m_container.setPose(m_startXPos, m_startYPos, m_startTheta);
+    m_container.setIdleMode("brake");
 
-    m_container.autonomousCommands(m_autonPosition).schedule();
+    m_container.autonomousCommands().schedule();
   }
 
-  /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {}
 
@@ -105,10 +68,9 @@ public class Robot extends TimedRobot {
     // this line or comment it out.
     CommandScheduler.getInstance().cancelAll();
     
-    m_container.setIdleMode(1);
+    m_container.setIdleMode("coast");
   }
 
-  /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {}
 }

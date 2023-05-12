@@ -1,8 +1,7 @@
-package frc.robot.commands;
+package frc.robot.Commands;
 
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.Subsystems.DrivetrainSubsystem;
 
 import java.util.function.DoubleSupplier;
 
@@ -13,6 +12,14 @@ public class DefaultDriveCommand extends CommandBase {
     private final DoubleSupplier m_translationYSupplier;
     private final DoubleSupplier m_rotationSupplier;
 
+    /**
+    * Method to drive the robot using joystick input.
+    *
+    * @param drivetrainSubsystem The swerve drive subsystem.
+    * @param translationXSupplier The x translational velocity (m/s).
+    * @param translationYSupplier The y translational velocity (m/s).
+    * @param rotationSupplier The rotational velocity (rad/s).
+    */
     public DefaultDriveCommand(DrivetrainSubsystem drivetrainSubsystem,
                                DoubleSupplier translationXSupplier,
                                DoubleSupplier translationYSupplier,
@@ -27,19 +34,16 @@ public class DefaultDriveCommand extends CommandBase {
 
     @Override
     public void execute() {
-        // You can use `new ChassisSpeeds(...)` for robot-oriented movement instead of field-oriented movement
         m_drivetrainSubsystem.drive(
-                ChassisSpeeds.fromFieldRelativeSpeeds(
-                        m_translationXSupplier.getAsDouble(),
-                        m_translationYSupplier.getAsDouble(),
-                        m_rotationSupplier.getAsDouble(),
-                        m_drivetrainSubsystem.getGyroscopeRotation()
-                )
+                m_translationXSupplier.getAsDouble(),
+                m_translationYSupplier.getAsDouble(),
+                m_rotationSupplier.getAsDouble(),
+                true
         );
     }
 
     @Override
     public void end(boolean interrupted) {
-        m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
+        m_drivetrainSubsystem.drive(0, 0, 0, false);
     }
 }

@@ -1,11 +1,10 @@
-package frc.robot.commands;
+package frc.robot.Commands;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.DrivetrainSubsystem;
-import frc.robot.subsystems.LimelightSubsystem;
+import frc.robot.Subsystems.DrivetrainSubsystem;
+import frc.robot.Subsystems.LimelightSubsystem;
 
 public class LimelightAlignment extends CommandBase {
     private final LimelightSubsystem m_limelightSubsystem;
@@ -25,19 +24,19 @@ public class LimelightAlignment extends CommandBase {
     }
 
     public void execute() {
-        velocity = -angController.calculate(Math.copySign(m_limelightSubsystem.POVAngle, m_limelightSubsystem.x));
-        velocity = (velocity < 0.005) ? 0 : velocity;
+        velocity = angController.calculate(Math.copySign(m_limelightSubsystem.POVAngle, m_limelightSubsystem.x));
+        velocity = (Math.abs(velocity) < 0.005) ? 0 : velocity;
         m_drivetrainSubsystem.drive(
-                ChassisSpeeds.fromFieldRelativeSpeeds(
-                        0,
-                        velocity,
-                        0,
-                        m_drivetrainSubsystem.getGyroscopeRotation()));
+                0,
+                velocity,
+                0,
+                true
+        );
         SmartDashboard.putNumber("Velocity", velocity);
     }
 
     public boolean isFinished() {
-        if (!(Math.abs(m_limelightSubsystem.POVAngle) < 0.1) || velocity != 0) {
+        if (!(Math.abs(m_limelightSubsystem.POVAngle) < 0.1)) {
             return false;
         }
         return true;
@@ -45,7 +44,6 @@ public class LimelightAlignment extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
-        m_drivetrainSubsystem.updateDistance();
+        m_drivetrainSubsystem.drive(0, 0, 0, false);
     }
 }

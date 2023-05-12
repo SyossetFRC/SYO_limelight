@@ -25,6 +25,5 @@
       }
     },
   ],
-  "java.test.defaultConfig": "WPIlibUnitTests",
-  "FSharp.suggestGitignore": false
+  "java.test.defaultConfig": "WPIlibUnitTests"
 }

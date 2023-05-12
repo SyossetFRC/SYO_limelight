@@ -4,117 +4,111 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 /**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the
- * name of this class or
- * the package after creating this project, you must also update the
- * build.gradle file in the
+ * The VM is configured to automatically run this class, and to call the functions corresponding to
+ * each mode, as described in the TimedRobot documentation. If you change the name of this class or
+ * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
 public class Robot extends TimedRobot {
+  RobotContainer m_container;
+  String m_autonPosition;
   /**
-   * This function is run when the robot is first started up and should be used
-   * for any
+   * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
-  NetworkTable table;
-  boolean foundObject;
-  PIDController angController;
-
   @Override
   public void robotInit() {
-    foundObject = false;
-    angController = new PIDController(0.01, 0, 0);
+    m_container = new RobotContainer();
   }
 
+  /**
+   * This function is called every robot packet, no matter the mode. Use this for items like
+   * diagnostics that you want ran during disabled, autonomous, teleoperated and test.
+   *
+   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
+   * SmartDashboard integrated updating.
+   */
   @Override
   public void robotPeriodic() {
+    // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
+    // commands, running already-scheduled commands, removing finished or interrupted commands,
+    // and running subsystem periodic() methods.  This must be called from the robot's periodic
+    // block in order for anything in the Command-based framework to work.
+    CommandScheduler.getInstance().run();
+
+    boolean autonPositionLeft = Shuffleboard.getTab("Drivetrain")
+        .add("Left Auton", false)
+        .withWidget("Toggle Button")
+        .getEntry()
+        .getBoolean(false);
+
+    boolean autonPositionMid = Shuffleboard.getTab("Drivetrain")
+        .add("Mid Auton", false)
+        .withWidget("Toggle Button")
+        .getEntry()
+        .getBoolean(false);
+
+    boolean autonPositionRight = Shuffleboard.getTab("Drivetrain")
+        .add("Right Auton", false)
+        .withWidget("Toggle Button")
+        .getEntry()
+        .getBoolean(false);
+
+    if (autonPositionLeft) {
+      m_autonPosition = "left";
+    }
+    if (autonPositionMid) {
+      m_autonPosition = "mid";
+    }
+    if (autonPositionRight) {
+      m_autonPosition = "right";
+    }
+
+    boolean resetSubsystem = Shuffleboard.getTab("LiveWindow")
+        .add("Reset Subsystems", false)
+        .withWidget("Toggle Button")
+        .getEntry()
+        .getBoolean(false);
+
+    if (resetSubsystem) {
+      m_container.reset(0);
+    }
   }
 
+  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    CommandScheduler.getInstance().cancelAll();
+
+    m_container.reset(1);
+    m_container.setIdleMode(0);
+
+    m_container.autonomousCommands(m_autonPosition).schedule();
   }
 
+  /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {
-  }
+  public void autonomousPeriodic() {}
 
   @Override
   public void teleopInit() {
-    table = NetworkTableInstance.getDefault().getTable("limelight");
+    // This makes sure that the autonomous stops running when
+    // teleop starts running. If you want the autonomous to
+    // continue until interrupted by another command, remove
+    // this line or comment it out.
+    CommandScheduler.getInstance().cancelAll();
+    
+    m_container.setIdleMode(1);
   }
 
-  public void teleopPeriodic() {
-    NetworkTableEntry tx = table.getEntry("tx");
-    NetworkTableEntry ty = table.getEntry("ty");
-    NetworkTableEntry ta = table.getEntry("ta");
-
-    // read values periodically
-    double x = tx.getDouble(0.0);
-    double y = ty.getDouble(0.0);
-    double area = ta.getDouble(0.0);
-
-    // post to smart dashboard periodically
-    SmartDashboard.putNumber("LimelightX", x);
-    SmartDashboard.putNumber("LimelightY", y);
-    SmartDashboard.putNumber("LimelightArea", area);
-
-    // boolean to check if april tag is found
-    if (x != 0) {
-      foundObject = true;
-    } else {
-      foundObject = false;
-    }
-    SmartDashboard.putBoolean("Found April Tag?", foundObject);
-
-    // distance polynomial reg
-    double distance = 33.6 + (-1.57 * area) + (0.0286 * Math.pow(area, 2));
-    SmartDashboard.putNumber("Distance", distance);
-
-    // x angle and orbital angle calculations
-    double POVAngle = Math.atan(x / distance) * 180 / Math.PI;
-    double orbitalAngle = Math.atan(Math.hypot(x, y) / distance) * 180 / Math.PI;
-    SmartDashboard.putNumber("Orbital Angle", orbitalAngle);
-    SmartDashboard.putNumber("POV Angle", POVAngle);
-
-    // swerve bot calculations for velocity
-    double velocity = -angController.calculate(Math.copySign(POVAngle, x));
-    velocity = (velocity < 0.005) ? 0 : velocity;
-    SmartDashboard.putNumber("Velocity", velocity);
-    ChassisSpeeds swerveVelocity = new ChassisSpeeds(0, velocity, 0);
-  }
-
+  /** This function is called periodically during operator control. */
   @Override
-  public void disabledInit() {
-  }
-
-  @Override
-  public void disabledPeriodic() {
-  }
-
-  @Override
-  public void testInit() {
-  }
-
-  @Override
-  public void testPeriodic() {
-  }
-
-  @Override
-  public void simulationInit() {
-  }
-
-  @Override
-  public void simulationPeriodic() {
-  }
+  public void teleopPeriodic() {}
 }

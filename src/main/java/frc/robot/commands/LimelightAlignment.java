@@ -32,7 +32,7 @@ public class LimelightAlignment extends CommandBase {
     public void execute() {
         horizontalVelocity = horizontalPIDController.calculate(m_limelightSubsystem.horizontalAngle);
         //verticalVelocity = -verticalPIDController.calculate(m_limelightSubsystem.HRIDAYdistance - playerDistance);
-        horizontalVelocity = (Math.abs(horizontalVelocity) < 0.005) ? 0 : horizontalVelocity;
+        horizontalVelocity ```= (Math.abs(horizontalVelocity) < 0.005) ? 0 : horizontalVelocity;
         m_drivetrainSubsystem.drive(
                 verticalVelocity,
                 horizontalVelocity,

@@ -9,8 +9,11 @@ import frc.robot.Subsystems.LimelightSubsystem;
 public class LimelightAlignment extends CommandBase {
     private final LimelightSubsystem m_limelightSubsystem;
     private final DrivetrainSubsystem m_drivetrainSubsystem;
-    PIDController angController;
-    private double velocity;
+    PIDController horizontalPIDController;
+    PIDController verticalPIDController;
+    private double horizontalVelocity;
+    private double verticalVelocity;
+    private double playerDistance;
 
     public LimelightAlignment(DrivetrainSubsystem drivetrainSubsystem, LimelightSubsystem limelightSubsystem) {
         m_drivetrainSubsystem = drivetrainSubsystem;
@@ -19,24 +22,31 @@ public class LimelightAlignment extends CommandBase {
     }
 
     public void initialize() {
-        angController = new PIDController(0.01, 0, 0);
-        velocity = 0;
+        horizontalPIDController = new PIDController(0.01, 0, 0);
+        verticalPIDController = new PIDController(0.01, 0, 0);
+        horizontalVelocity = 0;
+        verticalVelocity = 0;
+        playerDistance = 50.8;
     }
 
     public void execute() {
-        velocity = angController.calculate(Math.copySign(m_limelightSubsystem.POVAngle, m_limelightSubsystem.x));
-        velocity = (Math.abs(velocity) < 0.005) ? 0 : velocity;
+        horizontalVelocity = horizontalPIDController.calculate(m_limelightSubsystem.horizontalAngle);
+        //verticalVelocity = -verticalPIDController.calculate(m_limelightSubsystem.HRIDAYdistance - playerDistance);
+        horizontalVelocity = (Math.abs(horizontalVelocity) < 0.005) ? 0 : horizontalVelocity;
         m_drivetrainSubsystem.drive(
-                0,
-                velocity,
+                verticalVelocity,
+                horizontalVelocity,
                 0,
                 true
         );
-        SmartDashboard.putNumber("Velocity", velocity);
+        SmartDashboard.putNumber("Horizontal Velocity", horizontalVelocity);
+        SmartDashboard.putNumber("Vertical Velocity", verticalVelocity);
     }
 
     public boolean isFinished() {
-        if (!(Math.abs(m_limelightSubsystem.POVAngle) < 0.1)) {
+        if (!(Math.abs(m_limelightSubsystem.horizontalAngle) < 0.1)) 
+        //&& Math.abs(m_limelightSubsystem.HRIDAYdistance - playerDistance) < 1) 
+        {
             return false;
         }
         return true;

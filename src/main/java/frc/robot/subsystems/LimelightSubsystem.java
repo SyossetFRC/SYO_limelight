@@ -1,5 +1,6 @@
 package frc.robot.Subsystems;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -8,13 +9,23 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LimelightSubsystem extends SubsystemBase {
     NetworkTable table;
-    boolean foundObject = false;
-    public double distance = 0;
-    public double POVAngle = 0;
+    public double HRIDAYdistance = 0;
+    public double LISULdistance = 0;
     public double orbitalAngle = 0;
-    public double x = 0;
-    public double y = 0;
+    public double horizontalAngle = 0;
+    public double verticalAngle = 0;
+    public double foundTag = 0;
+    boolean foundObject = false;
     public double area = 0;
+    double xCentimeters = 0;
+    double yCentimeters = 0;
+    double limelightLensHeightInches = 0.669291;
+    double goalHeightInches = 3;
+    double xResolution = 320;
+    double yResolution = 240;
+    double xPixels = 0;
+    double yPixels = 0;
+    double areaPixels = 0;
 
     public LimelightSubsystem() {
         table = NetworkTableInstance.getDefault().getTable("limelight");
@@ -25,37 +36,50 @@ public class LimelightSubsystem extends SubsystemBase {
         NetworkTableEntry tx = table.getEntry("tx");
         NetworkTableEntry ty = table.getEntry("ty");
         NetworkTableEntry ta = table.getEntry("ta");
+        NetworkTableEntry tv = table.getEntry("tv");
 
         // read values periodically
-        x = tx.getDouble(0.0);
-        y = ty.getDouble(0.0);
+        horizontalAngle = tx.getDouble(0.0);
+        verticalAngle = ty.getDouble(0.0);
+        foundTag = tv.getDouble(0.0);
         area = ta.getDouble(0.0);
 
         // post to smart dashboard periodically
-        SmartDashboard.putNumber("LimelightX", x);
-        SmartDashboard.putNumber("LimelightY", y);
-        SmartDashboard.putNumber("LimelightArea", area);
+        SmartDashboard.putNumber("HAngle", horizontalAngle);
+        SmartDashboard.putNumber("VAngle", verticalAngle);
+        SmartDashboard.putNumber("Area", area);
 
         // boolean to check if april tag is found
-        if (x != 0) {
+        if (foundTag != 0.0) {
             foundObject = true;
-        } else {
-            foundObject = false;
-        }
-        SmartDashboard.putBoolean("Found April Tag?", foundObject);
+        } 
+        SmartDashboard.putBoolean("?TagFound", foundObject);
 
-        // distance polynomial reg
-        distance = 33.6 + (-1.57 * area) + (0.0286 * Math.pow(area, 2));
-        SmartDashboard.putNumber("Distance", distance);
+        // distance power series
+        HRIDAYdistance = Units.inchesToMeters(54.4 * Math.pow(area, -0.475)) / 100; 
+        SmartDashboard.putNumber("HDist", HRIDAYdistance);
 
-        // x angle and orbital angle calculations
-        POVAngle = Math.atan(x / distance) * 180 / Math.PI;
-        orbitalAngle = Math.atan(Math.hypot(x, y) / distance) * 180 / Math.PI;
-        SmartDashboard.putNumber("Orbital Angle", orbitalAngle);
-        SmartDashboard.putNumber("POV Angle", POVAngle);
-    }
+        // distance angular calculations
+        LISULdistance = Units.inchesToMeters((goalHeightInches - limelightLensHeightInches) / Math.tan(Math.toRadians(verticalAngle))) / 100;
+        SmartDashboard.putNumber("LDist", LISULdistance);
 
-    public double getPOVAngle() {
-        return POVAngle;
+        // centimeter calculations
+        xCentimeters = Math.tan(Math.toRadians(horizontalAngle)) * HRIDAYdistance; 
+        yCentimeters = Math.tan(Math.toRadians(verticalAngle)) * HRIDAYdistance;
+        SmartDashboard.putNumber("XDist (cm)", xCentimeters);
+        SmartDashboard.putNumber("YDist (cm)", yCentimeters);
+
+        // pixel calculations
+        xPixels = horizontalAngle / 59.6 * xResolution;
+        yPixels = verticalAngle / 49.7 * yResolution;
+        areaPixels = area / 100 * xResolution * yResolution;
+        SmartDashboard.putNumber("xPixels", xPixels);
+        SmartDashboard.putNumber("yPixels", yPixels);
+        SmartDashboard.putNumber("areaPixels", areaPixels);
+
+         // x angle and orbital angle calculations
+         orbitalAngle = Math.toDegrees(Math.hypot(horizontalAngle, verticalAngle));
+         SmartDashboard.putNumber("Orbital Angle", orbitalAngle);
+         SmartDashboard.putNumber("POV Angle", horizontalAngle);
     }
 }

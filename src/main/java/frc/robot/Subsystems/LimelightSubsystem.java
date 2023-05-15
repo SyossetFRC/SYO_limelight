@@ -11,6 +11,7 @@ public class LimelightSubsystem extends SubsystemBase {
     NetworkTable table;
     public double HRIDAYdistance = 0;
     public double LISULdistance = 0;
+    public double FINALdistance = 0;
     public double orbitalAngle = 0;
     public double horizontalAngle = 0;
     public double verticalAngle = 0;
@@ -20,7 +21,7 @@ public class LimelightSubsystem extends SubsystemBase {
     double xCentimeters = 0;
     double yCentimeters = 0;
     double limelightLensHeightInches = 1.75;
-    double goalHeightInches = 7;
+    double goalHeightInches = 15;
     double xResolution = 320;
     double yResolution = 240;
     double xPixels = 0;
@@ -58,14 +59,16 @@ public class LimelightSubsystem extends SubsystemBase {
         // distance power series
         HRIDAYdistance = Units.inchesToMeters(54.4 * Math.pow(area, -0.475)) * 100; 
         SmartDashboard.putNumber("HDist", HRIDAYdistance);
-
+        
         // distance angular calculations
         LISULdistance = Units.inchesToMeters((goalHeightInches - limelightLensHeightInches) / Math.tan(Math.toRadians(verticalAngle + 10))) * 100;
-        SmartDashboard.putNumber("LDist", LISULdistance);
+
+        FINALdistance = (HRIDAYdistance + LISULdistance) / 2;
+        SmartDashboard.putNumber("Final Distance", FINALdistance);
 
         // centimeter calculations
-        xCentimeters = Math.tan(Math.toRadians(horizontalAngle)) * HRIDAYdistance; 
-        yCentimeters = Math.tan(Math.toRadians(verticalAngle)) * HRIDAYdistance;
+        xCentimeters = Math.tan(Math.toRadians(horizontalAngle)) * FINALdistance; 
+        yCentimeters = Math.tan(Math.toRadians(verticalAngle)) * FINALdistance;
         SmartDashboard.putNumber("XDist (cm)", xCentimeters);
         SmartDashboard.putNumber("YDist (cm)", yCentimeters);
 

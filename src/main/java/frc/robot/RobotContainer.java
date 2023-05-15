@@ -6,7 +6,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Commands.DefaultDriveCommand;
-import frc.robot.Commands.LimelightAlignment;
+import frc.robot.Commands.LimelightAlignmentCommand;
+import frc.robot.Commands.LimelightFollowCommand;
 import frc.robot.Commands.PositionDriveCommand;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 import frc.robot.Subsystems.LimelightSubsystem;
@@ -50,11 +51,15 @@ public class RobotContainer {
       m_rotateRight.whenPressed(() -> setRotatePower("right"));
       m_rotateRight.whenReleased(() -> setRotatePower("none"));
 
-      Button m_limeButton = new Button(() -> m_driveController.getRawButton(5));
-      m_limeButton.whenPressed(() -> new LimelightAlignment(m_drivetrainSubsystem, m_limelightSubsystem));
-      m_limeButton.whenReleased(() -> m_drivetrainSubsystem.drive(0, 0, 0, false));
+      Button m_limelightAlign = new Button(() -> m_driveController.getRawButton(5));
+      m_limelightAlign.whenPressed(() -> new LimelightAlignmentCommand(m_drivetrainSubsystem, m_limelightSubsystem));
+      m_limelightAlign.whenReleased(() -> m_drivetrainSubsystem.drive(0, 0, 0, false));
 
-      SmartDashboard.putData("LimelightCommand", new LimelightAlignment(m_drivetrainSubsystem, m_limelightSubsystem));
+      Button m_limelightFollow = new Button(() -> m_driveController.getRawButton(4));
+      m_limelightFollow.whenPressed(() -> new LimelightFollowCommand(m_drivetrainSubsystem, m_limelightSubsystem));
+      m_limelightFollow.whenReleased(() -> m_drivetrainSubsystem.drive(0, 0, 0, false));
+
+      SmartDashboard.putData("LimelightCommand", new LimelightAlignmentCommand(m_drivetrainSubsystem, m_limelightSubsystem));
     }
 
     public void setPose(double xPos, double yPos, double theta) {

@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 import frc.robot.Subsystems.LimelightSubsystem;
 
-public class LimelightAlignment extends CommandBase {
+public class LimelightAlignmentCommand extends CommandBase {
     private final LimelightSubsystem m_limelightSubsystem;
     private final DrivetrainSubsystem m_drivetrainSubsystem;
     PIDController horizontalPIDController;
@@ -15,7 +15,7 @@ public class LimelightAlignment extends CommandBase {
     private double verticalVelocity;
     private double playerDistance;
 
-    public LimelightAlignment(DrivetrainSubsystem drivetrainSubsystem, LimelightSubsystem limelightSubsystem) {
+    public LimelightAlignmentCommand(DrivetrainSubsystem drivetrainSubsystem, LimelightSubsystem limelightSubsystem) {
         m_drivetrainSubsystem = drivetrainSubsystem;
         m_limelightSubsystem = limelightSubsystem;
         addRequirements(m_limelightSubsystem, m_drivetrainSubsystem);

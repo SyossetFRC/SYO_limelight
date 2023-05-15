@@ -19,8 +19,8 @@ public class LimelightSubsystem extends SubsystemBase {
     public double area = 0;
     double xCentimeters = 0;
     double yCentimeters = 0;
-    double limelightLensHeightInches = 0.669291;
-    double goalHeightInches = 3;
+    double limelightLensHeightInches = 1.75;
+    double goalHeightInches = 7;
     double xResolution = 320;
     double yResolution = 240;
     double xPixels = 0;
@@ -56,11 +56,11 @@ public class LimelightSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("?TagFound", foundObject);
 
         // distance power series
-        HRIDAYdistance = Units.inchesToMeters(54.4 * Math.pow(area, -0.475)) / 100; 
+        HRIDAYdistance = Units.inchesToMeters(54.4 * Math.pow(area, -0.475)) * 100; 
         SmartDashboard.putNumber("HDist", HRIDAYdistance);
 
         // distance angular calculations
-        LISULdistance = Units.inchesToMeters((goalHeightInches - limelightLensHeightInches) / Math.tan(Math.toRadians(verticalAngle))) / 100;
+        LISULdistance = Units.inchesToMeters((goalHeightInches - limelightLensHeightInches) / Math.tan(Math.toRadians(verticalAngle + 10))) * 100;
         SmartDashboard.putNumber("LDist", LISULdistance);
 
         // centimeter calculations

@@ -13,17 +13,17 @@ public class DefaultDriveCommand extends CommandBase {
     private final DoubleSupplier m_rotationSupplier;
 
     /**
-    * Method to drive the robot using joystick input.
-    *
-    * @param drivetrainSubsystem The swerve drive subsystem.
-    * @param translationXSupplier The x translational velocity (m/s).
-    * @param translationYSupplier The y translational velocity (m/s).
-    * @param rotationSupplier The rotational velocity (rad/s).
-    */
+     * Method to drive the robot using joystick input.
+     *
+     * @param drivetrainSubsystem  The swerve drive subsystem.
+     * @param translationXSupplier The x translational velocity (m/s).
+     * @param translationYSupplier The y translational velocity (m/s).
+     * @param rotationSupplier     The rotational velocity (rad/s).
+     */
     public DefaultDriveCommand(DrivetrainSubsystem drivetrainSubsystem,
-                               DoubleSupplier translationXSupplier,
-                               DoubleSupplier translationYSupplier,
-                               DoubleSupplier rotationSupplier) {
+            DoubleSupplier translationXSupplier,
+            DoubleSupplier translationYSupplier,
+            DoubleSupplier rotationSupplier) {
         this.m_drivetrainSubsystem = drivetrainSubsystem;
         this.m_translationXSupplier = translationXSupplier;
         this.m_translationYSupplier = translationYSupplier;
@@ -38,8 +38,7 @@ public class DefaultDriveCommand extends CommandBase {
                 m_translationXSupplier.getAsDouble(),
                 m_translationYSupplier.getAsDouble(),
                 m_rotationSupplier.getAsDouble(),
-                true
-        );
+                true);
     }
 
     @Override

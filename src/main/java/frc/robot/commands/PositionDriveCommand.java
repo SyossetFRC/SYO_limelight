@@ -29,21 +29,21 @@ public class PositionDriveCommand extends CommandBase {
     private boolean m_isThetaFinished = false;
 
     /**
-    * Method to drive the robot autonomously.
-    *
-    * @param drivetrainSubsystem The swerve drive subsystem.
-    * @param x The x coordinate to move to (m).
-    * @param y The y coordinate to move to (m).
-    * @param theta The angle to rotate to (rad).
-    * @param translationalVelocity The resultant translational velocity (m/s).
-    * @param rotationalVelocity The rotational velocity (rad/s).
-    */
+     * Method to drive the robot autonomously.
+     *
+     * @param drivetrainSubsystem   The swerve drive subsystem.
+     * @param x                     The x coordinate to move to (m).
+     * @param y                     The y coordinate to move to (m).
+     * @param theta                 The angle to rotate to (rad).
+     * @param translationalVelocity The resultant translational velocity (m/s).
+     * @param rotationalVelocity    The rotational velocity (rad/s).
+     */
     public PositionDriveCommand(DrivetrainSubsystem drivetrainSubsystem,
-                                double x,
-                                double y,
-                                double theta,
-                                double translationalVelocity,
-                                double rotationalVelocity) {
+            double x,
+            double y,
+            double theta,
+            double translationalVelocity,
+            double rotationalVelocity) {
         m_drivetrainSubsystem = drivetrainSubsystem;
         m_x = x;
         m_y = y;
@@ -67,15 +67,14 @@ public class PositionDriveCommand extends CommandBase {
         m_translationYSupplier = () -> (distanceY / Math.hypot(distanceX, distanceY) * m_translationalVelocity);
         m_rotationSupplier = () -> Math.copySign(m_rotationalVelocity, m_theta - m_initialAngle.getRadians());
     }
-    
+
     @Override
     public void execute() {
         m_drivetrainSubsystem.drive(
                 m_translationXSupplier.getAsDouble(),
                 m_translationYSupplier.getAsDouble(),
                 m_rotationSupplier.getAsDouble(),
-                true
-        );
+                true);
 
         if (Math.abs(m_drivetrainSubsystem.getPosition().getX() - m_x) < 0.1) {
             m_translationXSupplier = () -> 0;

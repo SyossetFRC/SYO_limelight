@@ -31,21 +31,22 @@ public class LimelightAlignment extends CommandBase {
 
     public void execute() {
         horizontalVelocity = horizontalPIDController.calculate(m_limelightSubsystem.horizontalAngle);
-        //verticalVelocity = -verticalPIDController.calculate(m_limelightSubsystem.HRIDAYdistance - playerDistance);
-        horizontalVelocity ```= (Math.abs(horizontalVelocity) < 0.005) ? 0 : horizontalVelocity;
+        // verticalVelocity =
+        // -verticalPIDController.calculate(m_limelightSubsystem.HRIDAYdistance -
+        // playerDistance);
+        horizontalVelocity = (Math.abs(horizontalVelocity) < 0.005) ? 0 : horizontalVelocity;
         m_drivetrainSubsystem.drive(
                 verticalVelocity,
                 horizontalVelocity,
                 0,
-                true
-        );
+                true);
         SmartDashboard.putNumber("Horizontal Velocity", horizontalVelocity);
         SmartDashboard.putNumber("Vertical Velocity", verticalVelocity);
     }
 
     public boolean isFinished() {
-        if (!(Math.abs(m_limelightSubsystem.horizontalAngle) < 0.1)) 
-        //&& Math.abs(m_limelightSubsystem.HRIDAYdistance - playerDistance) < 1) 
+        if (!(Math.abs(m_limelightSubsystem.horizontalAngle) < 0.1))
+        // && Math.abs(m_limelightSubsystem.HRIDAYdistance - playerDistance) < 1)
         {
             return false;
         }

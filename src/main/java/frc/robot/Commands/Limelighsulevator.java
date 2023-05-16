@@ -9,7 +9,10 @@ public class Limelighsulevator extends CommandBase {
     private final WinchSubsystem m_winchSubsystem;
     private final LimelightSubsystem m_limelightSubsystem;
 
+    private PIDController m_winchPidController; 
+
     private double m_startAngle;
+    private double m_power;
 
     public Limelighsulevator(WinchSubsystem winchSubsystem, LimelightSubsystem limelightSubsystem){
         m_winchSubsystem = winchSubsystem;
@@ -20,8 +23,11 @@ public class Limelighsulevator extends CommandBase {
 
     @Override
     public void initialize() {
+        m_winchPidController = new PIDController(0.015, 0, 0);
+
         m_startAngle = m_winchSubsystem.getWinchAbsPosition();
-        m_winchSubsystem.rotate(Math.copySign(0.8, (m_limelightSubsystem.getVerticalAngle() - m_startAngle)));
+        m_power = m_winchPidController.calculate(m_startAngle, m_limelightSubsystem.getVerticalAngle());
+        m_winchSubsystem.rotate(Math.copySign(m_power, (m_limelightSubsystem.getVerticalAngle() - m_startAngle)));
     }
 
     @Override

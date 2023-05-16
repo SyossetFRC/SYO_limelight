@@ -80,7 +80,7 @@ public class RobotContainer {
         .whenPressed(() -> new Limelighsul(m_drivetrainSubsystem, m_limelightSubsystem, 50.8, 0.025, 0.005, false));
 
     Button m_limelightElevator = new Button(() -> m_driveController.getRawButton(3));
-    m_limelightElevator.whenPressed(() -> new Limelighsulevator(m_winchSubsystem, m_limelightSubsystem));
+    m_limelightElevator.whenPressed(() -> new Limelighsulevator(m_winchSubsystem, m_elevatorSubsystem, m_limelightSubsystem));
   }
 
   public void setPose(double xPos, double yPos, double theta) {

@@ -33,7 +33,7 @@ public class Limelighsul extends CommandBase {
         this.distanceToPlayer = distanceToPlayer;
         this.fieldRelative = fieldRelative;
 
-        addRequirements(m_limelightSubsystem, m_drivetrainSubsystem);
+        addRequirements(m_drivetrainSubsystem);
     }
 
     public void initialize() {

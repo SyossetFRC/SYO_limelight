@@ -8,12 +8,17 @@ import frc.robot.Commands.BrakeCommand;
 import frc.robot.Commands.DefaultDriveCommand;
 import frc.robot.Commands.IdleDriveCommand;
 import frc.robot.Commands.Limelighsul;
+import frc.robot.Commands.Limelighsulevator;
 import frc.robot.Commands.PositionDriveCommand;
 import frc.robot.Subsystems.DrivetrainSubsystem;
+import frc.robot.Subsystems.ElevatorSubsystem;
 import frc.robot.Subsystems.LimelightSubsystem;
+import frc.robot.Subsystems.WinchSubsystem;
 
 public class RobotContainer {
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+  private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
+  private final WinchSubsystem m_winchSubsystem = new WinchSubsystem();
   private final LimelightSubsystem m_limelightSubsystem = new LimelightSubsystem(0, true, false, 10, 1.75, 15, 320,
       240);
 
@@ -70,9 +75,12 @@ public class RobotContainer {
     m_limelightFieldRelative
         .whileHeld(() -> new Limelighsul(m_drivetrainSubsystem, m_limelightSubsystem, 50.8, 0.025, 0.005, true));
 
-    Button m_limelightRobotRelative = new Button(() -> m_driveController.getRawButton(6));
+    Button m_limelightRobotRelative = new Button(() -> m_driveController.getRawButton(4));
     m_limelightFieldRelative
         .whileHeld(() -> new Limelighsul(m_drivetrainSubsystem, m_limelightSubsystem, 50.8, 0.025, 0.005, false));
+    
+    Button m_limelightElevator = new Button(() -> m_driveController.getRawButton(3));
+    m_limelightElevator.whenPressed(() -> new Limelighsulevator(m_winchSubsystem, m_limelightSubsystem));
   }
 
   public void setPose(double xPos, double yPos, double theta) {

@@ -4,7 +4,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import edu.wpi.first.networktables.GenericEntry;
@@ -125,6 +124,7 @@ public class LimelightSubsystem extends SubsystemBase {
         orbitalAngle = Math.toDegrees(Math.hypot(horizontalAngle, verticalAngle));
 
         foundTagBool = (foundTag != 0) ? true : false;
+        if (foundTagBool) {ledOn = true;} else {ledOn = false;}
 
         areaDistance = Units.inchesToMeters(54.4 * Math.pow(area, -0.475));
         /* TODO: Calculate trigonometric distances */
@@ -162,4 +162,7 @@ public class LimelightSubsystem extends SubsystemBase {
         return foundTagBool;
     }
 
+    public void setLEDStatus(boolean ledOn) {
+        this.ledOn = ledOn;
+    }
 }

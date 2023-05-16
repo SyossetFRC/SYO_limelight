@@ -43,6 +43,7 @@ public class Limelighsul extends CommandBase {
     }
 
     public void execute() {
+        m_limelightSubsystem.setLEDStatus(false);
         if (fieldRelative) {
             m_horizontalVelocity = m_horizontalPIDController.calculate(m_limelightSubsystem.getHorizontalAngle());
         } else {
@@ -67,7 +68,7 @@ public class Limelighsul extends CommandBase {
     }
 
     public boolean isFinished() {
-        if (!(Math.abs(m_limelightSubsystem.getHorizontalAngle()) < 0.25) && Math.abs(m_limelightSubsystem.getAreaDistance() - distanceToPlayer) < 0.5)
+        if (!(Math.abs(m_limelightSubsystem.getHorizontalAngle()) < 0.25) && !(Math.abs(m_limelightSubsystem.getAreaDistance() - distanceToPlayer) < 0.5))
         {
             return false;
         }

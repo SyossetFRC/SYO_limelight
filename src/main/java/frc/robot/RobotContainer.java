@@ -14,7 +14,8 @@ import frc.robot.Subsystems.LimelightSubsystem;
 
 public class RobotContainer {
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
-  private final LimelightSubsystem m_limelightSubsystem = new LimelightSubsystem(0, true, false, 10, 1.75, 15, 320, 240);
+  private final LimelightSubsystem m_limelightSubsystem = new LimelightSubsystem(0, true, false, 10, 1.75, 15, 320,
+      240);
 
   private final Joystick m_driveController = new Joystick(0);
   private double m_rotatePower;
@@ -22,11 +23,22 @@ public class RobotContainer {
   public RobotContainer() {
     m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
         m_drivetrainSubsystem,
-        () -> -MathUtil.applyDeadband(m_driveController.getRawAxis(1), 0.05) * (-m_driveController.getRawAxis(3) + 1)
+        () -> -MathUtil.applyDeadband(m_driveController.getRawAxis(1), 0.05) * (0.75)
             * DrivetrainSubsystem.kMaxSpeed,
-        () -> -MathUtil.applyDeadband(m_driveController.getRawAxis(0), 0.05) * (-m_driveController.getRawAxis(3) + 1)
+        // () -> -MathUtil.applyDeadband(m_driveController.getRawAxis(1), 0.05) *
+        // (-m_driveController.getRawAxis(3) + 1)
+        // * DrivetrainSubsystem.kMaxSpeed,
+        () -> -MathUtil.applyDeadband(m_driveController.getRawAxis(2), 0.05) * (0.75)
             * DrivetrainSubsystem.kMaxSpeed,
-        () -> m_rotatePower * (-m_driveController.getRawAxis(3) + 1) * DrivetrainSubsystem.kMaxAngularSpeed));
+        // () -> -MathUtil.applyDeadband(m_driveController.getRawAxis(2), 0.05) *
+        // (-m_driveController.getRawAxis(3) + 1)
+        // * DrivetrainSubsystem.kMaxSpeed,
+        () -> -MathUtil.applyDeadband(m_driveController.getRawAxis(3), 0.05) * (0.5)
+            * DrivetrainSubsystem.kMaxAngularSpeed));
+    // () -> m_rotatePower * (-m_driveController.getRawAxis(3) + 1) *
+    // DrivetrainSubsystem.kMaxAngularSpeed));
+    // NOTE TO DARIUS THIS JOYSTICK STUFF IS JUST FOR TESTING PURPOSES, I JUST WANT
+    // TO SEE IF IT'S BETTER THAN THE LOGITECH ONE!
 
     configureButtons();
   }
@@ -44,19 +56,23 @@ public class RobotContainer {
     m_brake.whenPressed(new BrakeCommand(m_drivetrainSubsystem));
     m_brake.whenReleased(() -> m_drivetrainSubsystem.getCurrentCommand().cancel());
 
-    Button m_rotateLeft = new Button(() -> m_driveController.getRawButton(11));
-    m_rotateLeft.whenPressed(() -> setRotatePower("left"));
-    m_rotateLeft.whenReleased(() -> setRotatePower("none"));
-
-    Button m_rotateRight = new Button(() -> m_driveController.getRawButton(12));
-    m_rotateRight.whenPressed(() -> setRotatePower("right"));
-    m_rotateRight.whenReleased(() -> setRotatePower("none"));
+    /*
+     * Button m_rotateLeft = new Button(() -> m_driveController.getRawButton(11));
+     * m_rotateLeft.whenPressed(() -> setRotatePower("left"));
+     * m_rotateLeft.whenReleased(() -> setRotatePower("none"));
+     * 
+     * Button m_rotateRight = new Button(() -> m_driveController.getRawButton(12));
+     * m_rotateRight.whenPressed(() -> setRotatePower("right"));
+     * m_rotateRight.whenReleased(() -> setRotatePower("none"));
+     */
 
     Button m_limelightFieldRelative = new Button(() -> m_driveController.getRawButton(5));
-    m_limelightFieldRelative.whileHeld(() -> new Limelighsul(m_drivetrainSubsystem, m_limelightSubsystem, 50.8, 0.025, 0.005, true));
+    m_limelightFieldRelative
+        .whileHeld(() -> new Limelighsul(m_drivetrainSubsystem, m_limelightSubsystem, 50.8, 0.025, 0.005, true));
 
     Button m_limelightRobotRelative = new Button(() -> m_driveController.getRawButton(6));
-    m_limelightFieldRelative.whileHeld(() -> new Limelighsul(m_drivetrainSubsystem, m_limelightSubsystem, 50.8, 0.025, 0.005, false));
+    m_limelightFieldRelative
+        .whileHeld(() -> new Limelighsul(m_drivetrainSubsystem, m_limelightSubsystem, 50.8, 0.025, 0.005, false));
   }
 
   public void setPose(double xPos, double yPos, double theta) {

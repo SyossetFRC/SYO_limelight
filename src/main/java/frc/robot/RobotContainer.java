@@ -53,7 +53,7 @@ public class RobotContainer {
     m_rotateRight.whenReleased(() -> setRotatePower("none"));
 
     Button m_limelightFieldRelative = new Button(() -> m_driveController.getRawButton(5));
-    m_limelightFieldRelative.whileHeld(() -> new Limelighsul(m_drivetrainSubsystem, m_limelightSubsystem, 50.8, 0.025, 0.005, false));
+    m_limelightFieldRelative.whileHeld(() -> new Limelighsul(m_drivetrainSubsystem, m_limelightSubsystem, 50.8, 0.025, 0.005, true));
 
     Button m_limelightRobotRelative = new Button(() -> m_driveController.getRawButton(6));
     m_limelightFieldRelative.whileHeld(() -> new Limelighsul(m_drivetrainSubsystem, m_limelightSubsystem, 50.8, 0.025, 0.005, false));

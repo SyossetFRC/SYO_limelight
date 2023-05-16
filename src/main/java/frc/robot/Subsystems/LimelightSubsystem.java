@@ -165,4 +165,14 @@ public class LimelightSubsystem extends SubsystemBase {
     public void setLEDStatus(boolean ledOn) {
         this.ledOn = ledOn;
     }
+
+    public boolean getLEDStatus() {
+        return ledOn;
+    }
+    
+    public void setPipeline(double pipelineId) {
+        this.pipelineId = pipelineId;
+    }
+
+
 }

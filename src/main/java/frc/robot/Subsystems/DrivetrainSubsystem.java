@@ -124,17 +124,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
    * 
    * @return The current odometric position of the robot.
    */
-  public Translation2d getPosition() {
-    return m_odometry.getPoseMeters().getTranslation();
-  }
+  public Translation2d getPosition() { return m_odometry.getPoseMeters().getTranslation(); }
 
   /** Returns the current odometric angle of the robot. 
    * 
    * @return The current odometric angle of the robot.
    */
-  public Rotation2d getAngle() {
-    return m_odometry.getPoseMeters().getRotation();
-  }
+  public Rotation2d getAngle() { return m_odometry.getPoseMeters().getRotation(); }
 
   /**
    * Sets the odometric position and angle of the robot.
@@ -292,7 +288,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
       final double speedRadiansPerSecond = state.speedMetersPerSecond / kWheelRadius;
       final double driveOutput = m_drivePIDController.calculate(m_driveEncoder.getVelocity() / kWheelRadius, speedRadiansPerSecond);
       final double driveFeedForward = m_driveFeedforward.calculate(speedRadiansPerSecond);
-      m_driveMotor.setVoltage(driveOutput + driveFeedForward);
+
+      // Eliminates Creep
+      if (Math.abs(speedRadiansPerSecond) > 0.01) {
+        m_driveMotor.setVoltage(driveOutput + driveFeedForward);
+      }
+      else {
+        m_driveMotor.setVoltage(0);
+      }
+      
     }
 
     /** Changes the drive motor idle mode.

@@ -6,142 +6,114 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.networktables.GenericEntry;
-
-
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 public class LimelightSubsystem extends SubsystemBase {
-    NetworkTable table;
-    public double HRIDAYdistance = 0;
-    public double LISULdistance = 0;
-    public double FINALdistance = 0;
-    public double orbitalAngle = 0;
-    public double horizontalAngle = 0;
-    public double verticalAngle = 0;
-    public double foundTag = 0;
-    boolean foundObject = false;
-    public double area = 0;
-    double xCentimeters = 0;
-    double yCentimeters = 0;
-    double limelightLensHeightInches = 1.75;
-    double goalHeightInches = 15;
-    double xResolution = 320;
-    double yResolution = 240;
-    double xPixels = 0;
-    double yPixels = 0;
-    double areaPixels = 0;
+    NetworkTable networkTable;
 
-    private final GenericEntry m_txEntry;
-    private final GenericEntry m_tyEntry;
-    private final GenericEntry m_taEntry;
+    private double pipelineId;
+    private boolean ledOn;
+    private boolean cameraMode;
 
-    private final GenericEntry m_RegressionDistanceEntry;
-    private final GenericEntry m_TrigDistanceEntry;
-    private final GenericEntry m_AvgDistaanceEntry;
-    private final GenericEntry m_XDistanceCmEntry;
-    private final GenericEntry m_YDistanceCmEntry;
+    private double horizontalAngle;
+    private double verticalAngle;
+    private double orbitalAngle;
 
-    private final GenericEntry m_xPixelsEntry;
-    private final GenericEntry m_yPixelsEntry;
-    private final GenericEntry m_areaPixelsEntry;
+    private double area;
+    private double foundTag;
+    private boolean foundTagBool;
 
-    private final GenericEntry m_OrbitalAngleEntry;
-    private final GenericEntry m_FoundTagEntry;
+    private double areaDistance;
+    private double trigDistance;
+    private double avgDistance;
 
-    public LimelightSubsystem() {
-        table = NetworkTableInstance.getDefault().getTable("limelight");
-        ShuffleboardTab tab = Shuffleboard.getTab("Limelight");
+    private double limelightLensHeight = 1.75;
+    private double limelightAngle;
+    private double goalHeightInches = 15;
 
-        ShuffleboardLayout NetworkTables = tab.getLayout("NetworkTables", BuiltInLayouts.kList).withSize(2, 2).withPosition(0, 0);
-        m_txEntry = NetworkTables.add("tx(POV)", table.getEntry("tx")).getEntry();
-        m_tyEntry = NetworkTables.add("ty",table.getEntry("ty")).getEntry();
-        m_taEntry = NetworkTables.add("ta",table.getEntry("ta")).getEntry();
+    private double horizontalResolution;
+    private double verticalResolution;
 
-        ShuffleboardLayout Distances = tab.getLayout("Angles", BuiltInLayouts.kList).withSize(2, 2).withPosition(2, 0);
-        m_RegressionDistanceEntry = Distances.add("Regression Distance", 0).getEntry();
-        m_TrigDistanceEntry = Distances.add("Trig Distance", 0).getEntry();
-        m_AvgDistaanceEntry = Distances.add("Average Distance", 0).getEntry();
-        m_XDistanceCmEntry = Distances.add("X Distance (cm)", 0).getEntry();
-        m_YDistanceCmEntry = Distances.add("Y Distance (cm)", 0).getEntry();
-        
-        ShuffleboardLayout Pixels = tab.getLayout("Pixels", BuiltInLayouts.kList).withSize(2, 2).withPosition(4, 0);
-        m_xPixelsEntry = Pixels.add("X Pixels", 0).getEntry();
-        m_yPixelsEntry = Pixels.add("Y Pixels", 0).getEntry();
-        m_areaPixelsEntry = Pixels.add("Area Pixels", 0).getEntry();
+    public LimelightSubsystem(double pipelineId, boolean ledOn, boolean cameraMode, double limelightAngle,
+            double limelightLensHeight, double goalHeightInches, double horizontalResolution,
+            double verticalResolution) {
+        this.pipelineId = pipelineId;
+        this.ledOn = ledOn;
+        this.cameraMode = cameraMode;
 
-        ShuffleboardLayout Other = tab.getLayout("Other", BuiltInLayouts.kList).withSize(2, 2).withPosition(6, 0);
-        m_OrbitalAngleEntry = Other.add("Orbital Angle", 0).getEntry();
-        m_FoundTagEntry = Other.add("Found Tag?", false).getEntry();
+        this.limelightAngle = limelightAngle;
+        this.limelightLensHeight = limelightLensHeight;
+        this.goalHeightInches = goalHeightInches;
+
+        this.horizontalResolution = horizontalResolution;
+        this.verticalResolution = verticalResolution;
+
+        networkTable = NetworkTableInstance.getDefault().getTable("limelight");
     }
-
-    public void updateShuffleboard()
-    {
-        m_txEntry.setDouble(horizontalAngle);
-        m_tyEntry.setDouble(verticalAngle);
-        m_taEntry.setDouble(area);
-
-        m_RegressionDistanceEntry.setDouble(HRIDAYdistance);
-        m_TrigDistanceEntry.setDouble(LISULdistance);
-        m_AvgDistaanceEntry.setDouble(FINALdistance);
-        m_XDistanceCmEntry.setDouble(xCentimeters);
-        m_YDistanceCmEntry.setDouble(yCentimeters);
-
-        m_xPixelsEntry.setDouble(xPixels);
-        m_yPixelsEntry.setDouble(yPixels);
-        m_areaPixelsEntry.setDouble(areaPixels);
-
-        m_OrbitalAngleEntry.setDouble(orbitalAngle);
-        m_FoundTagEntry.setBoolean(foundObject);
-
-    }
-           
 
     @Override
     public void periodic() {
-        NetworkTableEntry tx = table.getEntry("tx");
-        NetworkTableEntry ty = table.getEntry("ty");
-        NetworkTableEntry ta = table.getEntry("ta");
-        NetworkTableEntry tv = table.getEntry("tv");
+        NetworkTableEntry pipelineEntry = networkTable.getEntry("pipeline");
+        NetworkTableEntry camModeEntry = networkTable.getEntry("camMode");
+        NetworkTableEntry ledModeEntry = networkTable.getEntry("ledMode");
+        NetworkTableEntry horizontalEntry = networkTable.getEntry("tx");
+        NetworkTableEntry verticalEntry = networkTable.getEntry("ty");
+        NetworkTableEntry areaEntry = networkTable.getEntry("ta");
+        NetworkTableEntry foundTagEntry = networkTable.getEntry("tv");
 
-        // read values periodically
-        horizontalAngle = tx.getDouble(0.0);
-        verticalAngle = ty.getDouble(0.0);
-        foundTag = tv.getDouble(0.0);
-        area = ta.getDouble(0.0);
+        pipelineEntry.setNumber(pipelineId);
+        if (cameraMode) {camModeEntry.setNumber(1);} else {camModeEntry.setNumber(0);}
+        if (ledOn) {ledModeEntry.setNumber(3);} else {ledModeEntry.setNumber(1);}
+        horizontalAngle = horizontalEntry.getDouble(0.0);
+        verticalAngle = verticalEntry.getDouble(0.0);
+        area = areaEntry.getDouble(0.0);
+        foundTag = foundTagEntry.getDouble(0.0);
+        SmartDashboard.putNumber("Horizontal Angle", horizontalAngle);
+        SmartDashboard.putNumber("Vertical Angle", verticalAngle);
+        SmartDashboard.putNumber("Area", area);
 
-        
+        orbitalAngle = Math.toDegrees(Math.hypot(horizontalAngle, verticalAngle));
+        SmartDashboard.putNumber("Orbital Angle", orbitalAngle);
 
-        // boolean to check if april tag is found
-        if (foundTag != 0.0) {
-            foundObject = true;
-        } 
-        SmartDashboard.putBoolean("?TagFound", foundObject);
+        foundTagBool = (foundTag != 0) ? true : false;
+        SmartDashboard.putBoolean("Tag Found?", foundTagBool);
 
-        // distance power series
-        HRIDAYdistance = Units.inchesToMeters(54.4 * Math.pow(area, -0.475)) * 100; 
-        
-        // distance angular calculations
-        LISULdistance = Units.inchesToMeters((goalHeightInches - limelightLensHeightInches) / Math.tan(Math.toRadians(verticalAngle + 10))) * 100;
+        areaDistance = Units.inchesToMeters(54.4 * Math.pow(area, -0.475));
+        /* TODO: Calculate trigonometric distances */
+        trigDistance = Units.inchesToMeters(
+                (goalHeightInches - limelightLensHeight) / Math.tan(Math.toRadians(verticalAngle + limelightAngle)));
+        avgDistance = (areaDistance + trigDistance) / 2;
+        SmartDashboard.putNumber("Area Distance", areaDistance);
 
-        FINALdistance = (HRIDAYdistance + LISULdistance) / 2;
+        double horizontalDistance = Math.tan(Math.toRadians(horizontalAngle)) * areaDistance;
+        double verticalDistance = Math.tan(Math.toRadians(verticalAngle)) * areaDistance;
+        SmartDashboard.putNumber("Horizontal Distance", horizontalDistance);
+        SmartDashboard.putNumber("Vertical Distance", verticalDistance);
 
-        // centimeter calculations
-        xCentimeters = Math.tan(Math.toRadians(horizontalAngle)) * FINALdistance; 
-        yCentimeters = Math.tan(Math.toRadians(verticalAngle)) * FINALdistance;
-        
-
-        // pixel calculations
-        xPixels = horizontalAngle / 59.6 * xResolution;
-        yPixels = verticalAngle / 49.7 * yResolution;
-        areaPixels = area / 100 * xResolution * yResolution;
-    
-         // x angle and orbital angle calculations
-         orbitalAngle = Math.toDegrees(Math.hypot(horizontalAngle, verticalAngle));
-
-         updateShuffleboard();
+        double cameraPixelX = horizontalAngle / 59.6 * horizontalResolution;
+        double cameraPixelY = verticalAngle / 49.7 * verticalResolution;
+        double cameraPixelArea = area / 100 * horizontalResolution * verticalResolution;
+        SmartDashboard.putNumber("Camera Pixel X", cameraPixelX);
+        SmartDashboard.putNumber("Camera Pixel Y", cameraPixelY);
+        SmartDashboard.putNumber("Camera Pixel Area", cameraPixelArea);
     }
+    public double getHorizontalAngle() {
+        return horizontalAngle;
+    }
+
+    public double getVerticalAngle() {
+        return verticalAngle;
+    }
+
+    public double getAreaDistance() {
+        return areaDistance;
+    }
+
+    public double getTrigDistance() {
+        return areaDistance;
+    }
+
+    public boolean getFoundTag() {
+        return foundTagBool;
+    }
+
 }

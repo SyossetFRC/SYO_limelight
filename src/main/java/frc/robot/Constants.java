@@ -28,4 +28,10 @@ public final class Constants {
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 15; 
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 52; 
     public static final double BACK_RIGHT_MODULE_STEER_OFFSET = Math.toRadians(-2.8); 
+
+    public static final int WINCH_MOTOR_1 = 61;
+    public static final int WINCH_MOTOR_2 = 7;
+    public static final int WINCH_ENCODER = 0;
+    public static final int WINCH_SWITCH_TOP = 3;
+    public static final int WINCH_SWITCH_BOTTOM = 4;
 }

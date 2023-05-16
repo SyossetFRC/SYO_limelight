@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Commands.BrakeCommand;
 import frc.robot.Commands.DefaultDriveCommand;
+import frc.robot.Commands.DefaultElevatorCommand;
 import frc.robot.Commands.IdleDriveCommand;
 import frc.robot.Commands.Limelighsul;
 import frc.robot.Commands.Limelighsulevator;
@@ -23,6 +24,7 @@ public class RobotContainer {
       240);
 
   private final Joystick m_driveController = new Joystick(0);
+  private final Joystick m_operatorController = new Joystick(1);
   private double m_rotatePower;
 
   public RobotContainer() {
@@ -42,6 +44,12 @@ public class RobotContainer {
             * DrivetrainSubsystem.kMaxAngularSpeed));
     // () -> m_rotatePower * (-m_driveController.getRawAxis(3) + 1) *
     // DrivetrainSubsystem.kMaxAngularSpeed));
+
+    m_elevatorSubsystem.setDefaultCommand(new DefaultElevatorCommand(
+        m_elevatorSubsystem,
+        m_winchSubsystem,
+        () -> -MathUtil.applyDeadband(m_operatorController.getRawAxis(5), 0.05),
+        () -> -MathUtil.applyDeadband(m_operatorController.getRawAxis(1), 0.05)));
     // NOTE TO DARIUS THIS JOYSTICK STUFF IS JUST FOR TESTING PURPOSES, I JUST WANT
     // TO SEE IF IT'S BETTER THAN THE LOGITECH ONE!
 
@@ -78,7 +86,7 @@ public class RobotContainer {
     Button m_limelightRobotRelative = new Button(() -> m_driveController.getRawButton(4));
     m_limelightFieldRelative
         .whileHeld(() -> new Limelighsul(m_drivetrainSubsystem, m_limelightSubsystem, 50.8, 0.025, 0.005, false));
-    
+
     Button m_limelightElevator = new Button(() -> m_driveController.getRawButton(3));
     m_limelightElevator.whenPressed(() -> new Limelighsulevator(m_winchSubsystem, m_limelightSubsystem));
   }

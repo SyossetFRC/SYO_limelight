@@ -40,7 +40,7 @@ public class RobotContainer {
         // () -> -MathUtil.applyDeadband(m_driveController.getRawAxis(2), 0.05) *
         // (-m_driveController.getRawAxis(3) + 1)
         // * DrivetrainSubsystem.kMaxSpeed,
-        () -> -MathUtil.applyDeadband(m_driveController.getRawAxis(3), 0.05) * (0.5)
+        () -> -MathUtil.applyDeadband(m_driveController.getRawAxis(4), 0.05) * (0.5)
             * DrivetrainSubsystem.kMaxAngularSpeed));
     // () -> m_rotatePower * (-m_driveController.getRawAxis(3) + 1) *
     // DrivetrainSubsystem.kMaxAngularSpeed));
@@ -81,11 +81,11 @@ public class RobotContainer {
 
     Button m_limelightFieldRelative = new Button(() -> m_driveController.getRawButton(5));
     m_limelightFieldRelative
-        .whileHeld(() -> new Limelighsul(m_drivetrainSubsystem, m_limelightSubsystem, 50.8, 0.025, 0.005, true));
+        .whenPressed(() -> new Limelighsul(m_drivetrainSubsystem, m_limelightSubsystem, 50.8, 0.025, 0.005, true));
 
     Button m_limelightRobotRelative = new Button(() -> m_driveController.getRawButton(4));
     m_limelightRobotRelative
-        .whileHeld(() -> new Limelighsul(m_drivetrainSubsystem, m_limelightSubsystem, 50.8, 0.025, 0.005, false));
+        .whenPressed(() -> new Limelighsul(m_drivetrainSubsystem, m_limelightSubsystem, 50.8, 0.025, 0.005, false));
 
     Button m_limelightElevator = new Button(() -> m_driveController.getRawButton(3));
     m_limelightElevator.whenPressed(() -> new Limelighsulevator(m_winchSubsystem, m_limelightSubsystem));

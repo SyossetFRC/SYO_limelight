@@ -8,11 +8,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import edu.wpi.first.networktables.GenericEntry;
 
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-
 public class LimelightSubsystem extends SubsystemBase {
     NetworkTable networkTable;
 
@@ -152,34 +147,10 @@ public class LimelightSubsystem extends SubsystemBase {
     }
 
     public void instantiateShuffleboard() {
-        ShuffleboardTab tab = Shuffleboard.getTab("Limelight");
-
-        ShuffleboardLayout NetworkTables = tab.getLayout("NetworkTables", BuiltInLayouts.kList).withSize(2, 2)
-                .withPosition(0, 0);
-        m_txEntry = NetworkTables.add("tx(POV)", networkTable.getEntry("tx")).getEntry();
-        m_tyEntry = NetworkTables.add("ty", networkTable.getEntry("ty")).getEntry();
-        m_taEntry = NetworkTables.add("ta", networkTable.getEntry("ta")).getEntry();
-
-        ShuffleboardLayout Distances = tab.getLayout("Angles", BuiltInLayouts.kList).withSize(2, 2).withPosition(2, 0);
-        m_RegressionDistanceEntry = Distances.add("Regression Distance", 0).getEntry();
-        m_TrigDistanceEntry = Distances.add("Trig Distance", 0).getEntry();
-        m_AvgDistaanceEntry = Distances.add("Average Distance", 0).getEntry();
-
-        ShuffleboardLayout Other = tab.getLayout("Other", BuiltInLayouts.kList).withSize(2, 2).withPosition(4, 0);
-        m_OrbitalAngleEntry = Other.add("Orbital Angle", 0).getEntry();
-        m_FoundTagEntry = Other.add("Found Tag?", false).getEntry();
+        
     }
 
     public void updateShuffleboard() {
-        m_txEntry.setDouble(horizontalAngle);
-        m_tyEntry.setDouble(verticalAngle);
-        m_taEntry.setDouble(area);
-
-        m_RegressionDistanceEntry.setDouble(areaDistance);
-        m_TrigDistanceEntry.setDouble(trigDistance);
-        m_AvgDistaanceEntry.setDouble(avgDistance);
-
-        m_OrbitalAngleEntry.setDouble(orbitalAngle);
-        m_FoundTagEntry.setBoolean(foundTagBool);
+       
     }
 }

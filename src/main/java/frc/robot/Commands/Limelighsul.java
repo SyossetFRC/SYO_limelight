@@ -50,7 +50,7 @@ public class Limelighsul extends CommandBase {
         }
 
         m_verticalVelocity = -m_verticalPIDController.calculate((m_limelightSubsystem.getAreaDistance() -
-                distanceToPlayer)*100);
+                distanceToPlayer) * 100);
 
         m_verticalVelocity = (Math.abs(m_verticalVelocity) < deadband) ? 0 : m_verticalVelocity;
         m_horizontalVelocity = (Math.abs(m_horizontalVelocity) < deadband) ? 0 : m_horizontalVelocity;

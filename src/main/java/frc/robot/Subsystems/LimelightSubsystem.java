@@ -35,17 +35,6 @@ public class LimelightSubsystem extends SubsystemBase {
     private double horizontalResolution;
     private double verticalResolution;
 
-    private GenericEntry m_txEntry;
-    private GenericEntry m_tyEntry;
-    private GenericEntry m_taEntry;
-
-    private GenericEntry m_RegressionDistanceEntry;
-    private GenericEntry m_TrigDistanceEntry;
-    private GenericEntry m_AvgDistaanceEntry;
-
-    private GenericEntry m_OrbitalAngleEntry;
-    private GenericEntry m_FoundTagEntry;
-
     public LimelightSubsystem(double pipelineId, boolean ledOn, boolean cameraMode, double limelightAngle,
             double limelightLensHeight, double goalHeightInches, double horizontalResolution,
             double verticalResolution) {

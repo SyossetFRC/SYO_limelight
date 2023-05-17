@@ -62,16 +62,6 @@ public class RobotContainer {
     m_brake.whenPressed(new BrakeCommand(m_drivetrainSubsystem));
     m_brake.whenReleased(() -> m_drivetrainSubsystem.getCurrentCommand().cancel());
 
-    /*
-     * Button m_rotateLeft = new Button(() -> m_driveController.getRawButton(11));
-     * m_rotateLeft.whenPressed(() -> setRotatePower("left"));
-     * m_rotateLeft.whenReleased(() -> setRotatePower("none"));
-     * 
-     * Button m_rotateRight = new Button(() -> m_driveController.getRawButton(12));
-     * m_rotateRight.whenPressed(() -> setRotatePower("right"));
-     * m_rotateRight.whenReleased(() -> setRotatePower("none"));
-     */
-
     Button m_limelightFieldRelative = new Button(() -> m_driveController.getRawButton(5));
     m_limelightFieldRelative
         .whenPressed(() -> new LimelightRotOrTranTracking(m_drivetrainSubsystem, m_limelightSubsystem, 50.8, 0.025, 0.005, true));
@@ -80,11 +70,8 @@ public class RobotContainer {
     m_limelightRobotRelative
         .whenPressed(() -> new LimelightRotOrTranTracking(m_drivetrainSubsystem, m_limelightSubsystem, 0.78, 0.025, 0.005, false));
 
-    Button m_limelightElevator = new Button(() -> m_driveController.getRawButton(3));
-    m_limelightElevator.whenPressed(() -> new IgnoreThisDarius(m_winchSubsystem, m_elevatorSubsystem, m_limelightSubsystem));
-
-    SmartDashboard.putData("LimelightAlignmentCommand", new LimelightRotOrTranTracking(m_drivetrainSubsystem, m_limelightSubsystem, 0.85, 0.025, 0.005, true));
-    SmartDashboard.putData("RotationCommand", new LimelightRotOrTranTracking(m_drivetrainSubsystem, m_limelightSubsystem, 0.85, 0.025, 0.005, false));
+    SmartDashboard.putData("LimelightTranslationalCommand", new LimelightRotOrTranTracking(m_drivetrainSubsystem, m_limelightSubsystem, 0.85, 0.025, 0.005, true));
+    SmartDashboard.putData("LimelightRotationCommand", new LimelightRotOrTranTracking(m_drivetrainSubsystem, m_limelightSubsystem, 0.85, 0.025, 0.005, false));
 
   }
 
@@ -94,15 +81,5 @@ public class RobotContainer {
 
   public void setIdleMode(String idleMode) {
     m_drivetrainSubsystem.setIdleMode(idleMode);
-  }
-
-  private void setRotatePower(String state) {
-    if (state.equals("left")) {
-      m_rotatePower = 0.25;
-    } else if (state.equals("right")) {
-      m_rotatePower = -0.25;
-    } else {
-      m_rotatePower = 0;
-    }
   }
 }

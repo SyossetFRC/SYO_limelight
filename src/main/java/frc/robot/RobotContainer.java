@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Commands.BrakeCommand;
@@ -32,9 +33,9 @@ public class RobotContainer {
         m_drivetrainSubsystem,
         () -> -MathUtil.applyDeadband(m_driveController.getRawAxis(1), 0.05) * (0.75)
             * DrivetrainSubsystem.kMaxSpeed,
-        () -> -MathUtil.applyDeadband(m_driveController.getRawAxis(2), 0.05) * (0.75)
+        () -> -MathUtil.applyDeadband(m_driveController.getRawAxis(0), 0.05) * (0.75)
             * DrivetrainSubsystem.kMaxSpeed,
-        () -> -MathUtil.applyDeadband(m_driveController.getRawAxis(4), 0.05) * (0.5)
+        () -> -MathUtil.applyDeadband(m_driveController.getRawAxis(4), 0.05) * (0.25)
             * DrivetrainSubsystem.kMaxAngularSpeed));
 
     m_elevatorSubsystem.setDefaultCommand(new DefaultElevatorCommand(
@@ -77,10 +78,14 @@ public class RobotContainer {
 
     Button m_limelightRobotRelative = new Button(() -> m_driveController.getRawButton(4));
     m_limelightRobotRelative
-        .whenPressed(() -> new Limelighsul(m_drivetrainSubsystem, m_limelightSubsystem, 50.8, 0.025, 0.005, false));
+        .whenPressed(() -> new Limelighsul(m_drivetrainSubsystem, m_limelightSubsystem, 0.78, 0.025, 0.005, false));
 
     Button m_limelightElevator = new Button(() -> m_driveController.getRawButton(3));
     m_limelightElevator.whenPressed(() -> new Limelighsulevator(m_winchSubsystem, m_elevatorSubsystem, m_limelightSubsystem));
+
+    SmartDashboard.putData("LimelightAlignmentCommand", new Limelighsul(m_drivetrainSubsystem, m_limelightSubsystem, 0.85, 0.025, 0.005, true));
+    SmartDashboard.putData("RotationCommand", new Limelighsul(m_drivetrainSubsystem, m_limelightSubsystem, 0.85, 0.025, 0.005, false));
+
   }
 
   public void setPose(double xPos, double yPos, double theta) {

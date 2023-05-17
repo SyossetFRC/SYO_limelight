@@ -4,6 +4,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import edu.wpi.first.networktables.GenericEntry;
@@ -92,11 +93,6 @@ public class LimelightSubsystem extends SubsystemBase {
         orbitalAngle = Math.toDegrees(Math.hypot(horizontalAngle, verticalAngle));
 
         foundTagBool = (foundTag != 0) ? true : false;
-        if (foundTagBool) {
-            ledOn = true;
-        } else {
-            ledOn = false;
-        }
 
         areaDistance = Units.inchesToMeters(54.4 * Math.pow(area, -0.475));
         /* TODO: Calculate trigonometric distances */
@@ -110,8 +106,10 @@ public class LimelightSubsystem extends SubsystemBase {
         double cameraPixelX = horizontalAngle / 59.6 * horizontalResolution;
         double cameraPixelY = verticalAngle / 49.7 * verticalResolution;
         double cameraPixelArea = area / 100 * horizontalResolution * verticalResolution;
+        SmartDashboard.putNumber("Area Distance", areaDistance);
+        SmartDashboard.putNumber("Horizontal Angle", horizontalAngle);
+        SmartDashboard.putNumber("Vertical Angle", verticalAngle);
 
-        updateShuffleboard();
     }
 
     public double getHorizontalAngle() {

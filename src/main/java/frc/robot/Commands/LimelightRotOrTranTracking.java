@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 import frc.robot.Subsystems.LimelightSubsystem;
 
-public class Limelighsul extends CommandBase {
+public class LimelightRotOrTranTracking extends CommandBase {
     private final LimelightSubsystem m_limelightSubsystem;
     private final DrivetrainSubsystem m_drivetrainSubsystem;
 
@@ -23,7 +23,7 @@ public class Limelighsul extends CommandBase {
 
     private boolean fieldRelative;
 
-    public Limelighsul(DrivetrainSubsystem drivetrainSubsystem, LimelightSubsystem limelightSubsystem,
+    public LimelightRotOrTranTracking(DrivetrainSubsystem drivetrainSubsystem, LimelightSubsystem limelightSubsystem,
             double distanceToPlayer, double kP, double deadband, boolean fieldRelative) {
         m_drivetrainSubsystem = drivetrainSubsystem;
         m_limelightSubsystem = limelightSubsystem;

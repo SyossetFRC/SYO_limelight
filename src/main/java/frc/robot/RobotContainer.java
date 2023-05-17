@@ -9,8 +9,8 @@ import frc.robot.Commands.BrakeCommand;
 import frc.robot.Commands.DefaultDriveCommand;
 import frc.robot.Commands.DefaultElevatorCommand;
 import frc.robot.Commands.IdleDriveCommand;
-import frc.robot.Commands.Limelighsul;
-import frc.robot.Commands.Limelighsulevator;
+import frc.robot.Commands.LimelightRotOrTranTracking;
+import frc.robot.Commands.IgnoreThisDarius;
 import frc.robot.Commands.PositionDriveCommand;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 import frc.robot.Subsystems.ElevatorSubsystem;
@@ -74,17 +74,17 @@ public class RobotContainer {
 
     Button m_limelightFieldRelative = new Button(() -> m_driveController.getRawButton(5));
     m_limelightFieldRelative
-        .whenPressed(() -> new Limelighsul(m_drivetrainSubsystem, m_limelightSubsystem, 50.8, 0.025, 0.005, true));
+        .whenPressed(() -> new LimelightRotOrTranTracking(m_drivetrainSubsystem, m_limelightSubsystem, 50.8, 0.025, 0.005, true));
 
     Button m_limelightRobotRelative = new Button(() -> m_driveController.getRawButton(4));
     m_limelightRobotRelative
-        .whenPressed(() -> new Limelighsul(m_drivetrainSubsystem, m_limelightSubsystem, 0.78, 0.025, 0.005, false));
+        .whenPressed(() -> new LimelightRotOrTranTracking(m_drivetrainSubsystem, m_limelightSubsystem, 0.78, 0.025, 0.005, false));
 
     Button m_limelightElevator = new Button(() -> m_driveController.getRawButton(3));
-    m_limelightElevator.whenPressed(() -> new Limelighsulevator(m_winchSubsystem, m_elevatorSubsystem, m_limelightSubsystem));
+    m_limelightElevator.whenPressed(() -> new IgnoreThisDarius(m_winchSubsystem, m_elevatorSubsystem, m_limelightSubsystem));
 
-    SmartDashboard.putData("LimelightAlignmentCommand", new Limelighsul(m_drivetrainSubsystem, m_limelightSubsystem, 0.85, 0.025, 0.005, true));
-    SmartDashboard.putData("RotationCommand", new Limelighsul(m_drivetrainSubsystem, m_limelightSubsystem, 0.85, 0.025, 0.005, false));
+    SmartDashboard.putData("LimelightAlignmentCommand", new LimelightRotOrTranTracking(m_drivetrainSubsystem, m_limelightSubsystem, 0.85, 0.025, 0.005, true));
+    SmartDashboard.putData("RotationCommand", new LimelightRotOrTranTracking(m_drivetrainSubsystem, m_limelightSubsystem, 0.85, 0.025, 0.005, false));
 
   }
 

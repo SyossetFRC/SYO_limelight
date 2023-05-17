@@ -6,7 +6,7 @@ import frc.robot.Subsystems.WinchSubsystem;
 import frc.robot.Subsystems.LimelightSubsystem;
 import frc.robot.Subsystems.ElevatorSubsystem;
 
-public class Limelighsulevator extends CommandBase {
+public class IgnoreThisDarius extends CommandBase {
     private final WinchSubsystem m_winchSubsystem;
     private final LimelightSubsystem m_limelightSubsystem;
     private final ElevatorSubsystem m_ElevatorSubsystem;
@@ -17,7 +17,7 @@ public class Limelighsulevator extends CommandBase {
     private double m_startAngle;
     private double m_power;
 
-    public Limelighsulevator(WinchSubsystem winchSubsystem, ElevatorSubsystem elevatorSubsystem, LimelightSubsystem limelightSubsystem){
+    public IgnoreThisDarius(WinchSubsystem winchSubsystem, ElevatorSubsystem elevatorSubsystem, LimelightSubsystem limelightSubsystem){
         m_winchSubsystem = winchSubsystem;
         m_ElevatorSubsystem = elevatorSubsystem;
         m_limelightSubsystem = limelightSubsystem;

@@ -7,19 +7,26 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Commands.BrakeCommand;
 import frc.robot.Commands.DefaultDriveCommand;
+import frc.robot.Commands.DefaultElevatorCommand;
 import frc.robot.Commands.IdleDriveCommand;
 import frc.robot.Commands.TargetTrackingWithLimelight;
 import frc.robot.Commands.PositionDriveCommand;
 import frc.robot.Subsystems.DrivetrainSubsystem;
+import frc.robot.Subsystems.ElevatorSubsystem;
 import frc.robot.Subsystems.LimelightSubsystem;
+import frc.robot.Subsystems.WinchSubsystem;
 
 /** Represents the entire robot. */
 public class RobotContainer {
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+  private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
+  private final WinchSubsystem m_winchSubsystem = new WinchSubsystem();
+
   private final LimelightSubsystem m_limelightSubsystem = new LimelightSubsystem(0, true, false, 10, 1.75, 15, 320,
       240, false);
 
   private final Joystick m_driveController = new Joystick(0);
+  private final Joystick m_operatorController = new Joystick(1);
   private double m_powerLimit = 1.0;
 
   /**
@@ -35,6 +42,12 @@ public class RobotContainer {
             * DrivetrainSubsystem.kMaxSpeed,
         () -> (-MathUtil.applyDeadband(m_driveController.getRawAxis(4), 0.05) / 2.0) * m_powerLimit
             * DrivetrainSubsystem.kMaxAngularSpeed));
+
+    m_elevatorSubsystem.setDefaultCommand(new DefaultElevatorCommand(
+        m_elevatorSubsystem,
+        m_winchSubsystem,
+        () -> -MathUtil.applyDeadband(m_operatorController.getRawAxis(5), 0.05),
+        () -> -MathUtil.applyDeadband(m_operatorController.getRawAxis(1), 0.05)));
 
     configureButtons();
   }
@@ -65,16 +78,21 @@ public class RobotContainer {
     Button m_decrementPowerLimit = new Button(
         () -> (m_driveController.getPOV() >= 135 && m_driveController.getPOV() <= 225));
     m_decrementPowerLimit.whenPressed(() -> changePowerLimit(-0.2));
-    
+
     // Driver button B
     Button m_translationalLimelightTracking = new Button(() -> m_driveController.getRawButton(2));
-    m_translationalLimelightTracking.whileActiveContinuous(new TargetTrackingWithLimelight(m_drivetrainSubsystem, m_limelightSubsystem, 0.85, 0.05, 0.025, 0.005, true));
+    m_translationalLimelightTracking.whileActiveContinuous(
+        new TargetTrackingWithLimelight(m_drivetrainSubsystem, m_limelightSubsystem, 0.85, 0.05, 0.025, 0.005, true));
     m_translationalLimelightTracking.whenReleased(() -> m_drivetrainSubsystem.getCurrentCommand().cancel());
 
     // Driver button Y
     Button m_rotationalLimelightTracking = new Button(() -> m_driveController.getRawButton(4));
-    m_rotationalLimelightTracking.whileActiveContinuous(new TargetTrackingWithLimelight(m_drivetrainSubsystem, m_limelightSubsystem, 0.85, 0.05, 0.025, 0.005, false));
+    m_rotationalLimelightTracking.whileActiveContinuous(
+        new TargetTrackingWithLimelight(m_drivetrainSubsystem, m_limelightSubsystem, 0.85, 0.05, 0.025, 0.005, false));
     m_rotationalLimelightTracking.whenReleased(() -> m_drivetrainSubsystem.getCurrentCommand().cancel());
+
+    Button m_resetElevator = new Button(() -> m_operatorController.getRawButton(7) && m_operatorController.getRawButton(8));
+    m_resetElevator.whenPressed(() -> reset());
 
     SmartDashboard.putData("LimelightTranslationalCommand",
         new TargetTrackingWithLimelight(m_drivetrainSubsystem, m_limelightSubsystem, 0.85, 0.05, 0.025, 0.005, true));
@@ -94,5 +112,10 @@ public class RobotContainer {
     if ((m_powerLimit <= 1.0 - Math.abs(delta) || delta <= 0) && (m_powerLimit >= Math.abs(delta) || delta >= 0)) {
       m_powerLimit += delta;
     }
+  }
+
+  public void reset() {
+    m_elevatorSubsystem.resetEncoders();
+    m_winchSubsystem.resetEncoders();
   }
 }

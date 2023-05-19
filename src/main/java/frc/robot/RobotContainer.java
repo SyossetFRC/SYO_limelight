@@ -9,15 +9,19 @@ import frc.robot.Commands.BrakeCommand;
 import frc.robot.Commands.DefaultDriveCommand;
 import frc.robot.Commands.IdleDriveCommand;
 import frc.robot.Commands.TargetTrackingWithLimelight;
+import frc.robot.Commands.WinchElevatorLimelightCommand;
 import frc.robot.Commands.PositionDriveCommand;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 import frc.robot.Subsystems.LimelightSubsystem;
+import frc.robot.Subsystems.WinchSubsystem;
+import frc.robot.Subsystems.ElevatorSubsystem;
 
 /** Represents the entire robot. */
 public class RobotContainer {
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
   private final LimelightSubsystem m_limelightSubsystem = new LimelightSubsystem(0, true, false, 10, 1.75, 15, 320,
       240, false);
+  private final WinchSubsystem m_winchSubsystem = new WinchSubsystem();
 
   private final Joystick m_driveController = new Joystick(0);
   private double m_powerLimit = 1.0;
@@ -66,6 +70,10 @@ public class RobotContainer {
         () -> (m_driveController.getPOV() >= 135 && m_driveController.getPOV() <= 225));
     m_decrementPowerLimit.whenPressed(() -> changePowerLimit(-0.2));
     
+    Button m_SubsystemLimelight = new Button(() -> m_driveController.getRawButton(2));
+    m_SubsystemLimelight.whileActiveContinuous(new WinchElevatorLimelightCommand(m_winchSubsystem, m_limelightSubsystem));
+    m_SubsystemLimelight.whenReleased(() ->m_limelightSubsystem.getCurrentCommand().cancel());
+
     // Driver button B
     Button m_translationalLimelightTracking = new Button(() -> m_driveController.getRawButton(2));
     m_translationalLimelightTracking.whileActiveContinuous(new TargetTrackingWithLimelight(m_drivetrainSubsystem, m_limelightSubsystem, 0.85, 0.05, 0.025, 0.005, true));
